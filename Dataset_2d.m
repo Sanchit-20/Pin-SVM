@@ -1,4 +1,4 @@
-% Author: Rahul Choudhary
+% Author: Rahul Choudhary & Sanchit Jalan
 
 %------Generating artificial 2d two class dataset-------
 
@@ -51,7 +51,8 @@ Beq = []
 A = [-Y -X.*(Y*[1 1]) -eye(2*n)];
 B = -ones(2*n, 1);
 lb = [-inf*ones(3, 1); zeros(2*n, 1)];
-ub = [inf*ones(3 + 2*n, 1)];
+% ub = [inf*ones(3 + 2*n, 1)];
+ub = [inf*ones(2*n+3,1)];
 
 [W, fval] = quadprog(H, f, A, B, Aeq, Beq, lb, ub);
 b = W(1, :);
@@ -71,23 +72,23 @@ disp(-(b/w(2)));
 
 %--------Plotting the optimal Hinge loss hyperplane--------
 
-x = -2:0.3:2;
+x = -2:0.1:2;
 y1 = -(b + w(1)*x)/w(2);
 y2 = -(1 + b + w(1)*x)/w(2);
 y3 = -(b + w(1)*x - 1)/w(2);
 
-plot(x, y1);
-plot(x, y2);
-plot(x, y3);
+% plot(x, y1);
+% plot(x, y2);
+% plot(x, y3);
 hold on;
 
 %-------Pinball loss SVM classifier--------
 
-t = 1; %tau in pinball loss function
+t = 0.5; %tau in pinball loss function
 A_p = [-Y -X.*(Y*[1 1]) -eye(2*n); Y X.*(Y*[1 1]) -(1/t)*eye(2*n)];
 B_p = [-ones(2*n, 1); ones(2*n, 1)];
 
-[W_p, fval_p] = quadprog(H, f, A_p, B_p);
+[W_p, fval_p] = quadprog(H,f,A_p,B_p);
 b_p = W_p(1, :);
 w_p = W_p(2:3, :);
 
@@ -109,12 +110,52 @@ y4 = -(b_p + w_p(1)*x)/w_p(2);
 y5 = -(1 + b_p + w_p(1)*x)/w_p(2);
 y6 = -(b_p + w_p(1)*x - 1)/w_p(2);
 
-plot(x, y4, '.');
+plot(x, y4,'.');
 hold on;
-plot(x, y5, '.');
+plot(x, y5,'.');
 hold on;
-plot(x, y6, '.');
+plot(x, y6,'.');
+hold on;
+
+
+% Insensitive(z) Pinball loss classifier
+
+z = 0.2; %epsilum in insensitive zone
+r=z/t;
+
+A_in = [-Y -X.*(Y*[1 1]) -eye(2*n); Y X.*(Y*[1 1]) -(1/t)*eye(2*n)];
+B_in = [-ones(2*n, 1)+z; ones(2*n, 1)+r];
+
+
+[W_in, fval_in] = quadprog(H, f,A_in, B_in,Aeq,Beq,lb,ub);
+b_in = W_in(1, :);
+w_in = W_in(2:3, :);
+
+disp(b_in);
+disp(w_in);
+
+disp('-w(1)/w(2) for Insensitive Pin-SVM:');
+disp(-(w_in(1)/w_in(2)));
+
+disp('-b/w(2) for Insensitive Pin-SVM:');
+disp(-(b_in/w_in(2)));
+
+
+%--------Plotting the optimal Pinball loss hyperplane--------
+
+y7 = -(b_in + w_in(1)*x)/w_in(2);
+y8 = -(1 + b_in + w_in(1)*x)/w_in(2);
+y9 = -(b_in + w_in(1)*x - 1)/w_in(2);
+
+plot(x, y7,'*','MarkerIndices',1:1:length(y7));
+hold on;
+plot(x, y8,'*','MarkerIndices',1:1:length(y8));
+hold on;
+plot(x, y9,'*','MarkerIndices',1:1:length(y9));
 hold off;
+
+
+
 
 le=["Parameter ", "        PIN_SVM .  ", "       Hinge_Loss_SVM.  ", "   Noise_level     "," Tau(t)   "];
 
@@ -159,26 +200,25 @@ b_const(end+1)=num2str(t);
 % fprintf(fid, '%s\n', le{1,end}) ;
 % fclose(fid) ;
 
-fid = fopen('lol.csv', 'a') ;
-fprintf(fid, '%s;', b_parameter{1,1:end-1}) ;
-fprintf(fid, '%s\n', b_parameter{1,end}) ;
-fclose(fid) ;
-
-fid = fopen('lol.csv', 'a') ;
-fprintf(fid, '%s;', w_parameter{1,1:end-1}) ;
-fprintf(fid, '%s\n', w_parameter{1,end}) ;
-fclose(fid) ;
-
-fid = fopen('lol.csv', 'a') ;
-fprintf(fid, '%s;', slope{1,1:end-1}) ;
-fprintf(fid, '%s\n', slope{1,end}) ;
-fclose(fid) ;
-
-fid = fopen('lol.csv', 'a') ;
-fprintf(fid, '%s;', b_const{1,1:end-1}) ;
-fprintf(fid, '%s\n', b_const{1,end}) ;
-fclose(fid) ;
-
+% fid = fopen('lol.csv', 'a') ;
+% fprintf(fid, '%s;', b_parameter{1,1:end-1}) ;
+% fprintf(fid, '%s\n', b_parameter{1,end}) ;
+% fclose(fid) ;
+% 
+% fid = fopen('lol.csv', 'a') ;
+% fprintf(fid, '%s;', w_parameter{1,1:end-1}) ;
+% fprintf(fid, '%s\n', w_parameter{1,end}) ;
+% fclose(fid) ;
+% 
+% fid = fopen('lol.csv', 'a') ;
+% fprintf(fid, '%s;', slope{1,1:end-1}) ;
+% fprintf(fid, '%s\n', slope{1,end}) ;
+% fclose(fid) ;
+% 
+% fid = fopen('lol.csv', 'a') ;
+% fprintf(fid, '%s;', b_const{1,1:end-1}) ;
+% fprintf(fid, '%s\n', b_const{1,end}) ;
+% fclose(fid) ;
 
 %dlmwrite('lol.csv',str(1,:),'-append');
 
