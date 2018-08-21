@@ -171,7 +171,7 @@ b_parameter(end+1)=num2str(boptimal(1));
 b_parameter(end+1)=num2str(boptimal(3));
 b_parameter(end+1)=s;
 b_parameter(end+1)=num2str(t);
-b_parameter(end+1)=num2str(z)
+b_parameter(end+1)=num2str(z);
 
 w_parameter=strings(0);
 w_parameter(end+1)="w";
@@ -181,33 +181,33 @@ str=strcat("(",num2str(woptimal(1,1)));str=strcat(str," ");str=strcat(str,num2st
 w_parameter(end+1)=str;
 str=strcat("(",num2str(woptimal(1,3)));str=strcat(str," ");str=strcat(str,num2str(woptimal(2,3)));str=strcat(str,")");
 w_parameter(end+1)=str;
-w_parameter(end+1)=s;
-w_parameter(end+1)=num2str(t);
-w_parameter(end+1)=num2str(z);
+% w_parameter(end+1)=s;
+% w_parameter(end+1)=num2str(t);
+% w_parameter(end+1)=num2str(z);
 
 slope=strings(0);
 slope(end+1)='-w(1)/(w(2))';
 slope(end+1)=num2str(-(w_p(1)/w_p(2)));
 slope(end+1)=num2str(-(w(1)/w(2)));
 slope(end+1)=num2str(-(w_in(1)/w_in(2)) );
-slope(end+1)=s;
-slope(end+1)=num2str(t);
-slope(end+1)=num2str(z);
+% slope(end+1)=s;
+% slope(end+1)=num2str(t);
+% slope(end+1)=num2str(z);
 
 b_const=strings(0);
 b_const(end+1)='-b/(w(2))';
 b_const(end+1)=num2str(-(b_p/w_p(2)));
 b_const(end+1)=num2str(-(b/w(2)));
 b_const(end+1)=num2str(-(b_in/w_in(2)));
-b_const(end+1)=s;
-b_const(end+1)=num2str(t);
-b_const(end+1)=num2str(z);
+% b_const(end+1)=s;
+% b_const(end+1)=num2str(t);
+% b_const(end+1)=num2str(z);
 
 % Useful code.
-fid = fopen('lol.csv', 'w') ;
-fprintf(fid, '%s;', le{1,1:end-1}) ;
-fprintf(fid, '%s\n', le{1,end}) ;
-fclose(fid) ;
+% fid = fopen('lol.csv', 'w') ;
+% fprintf(fid, '%s;', le{1,1:end-1}) ;
+% fprintf(fid, '%s\n', le{1,end}) ;
+% fclose(fid) ;
 
 fid = fopen('lol.csv', 'a') ;
 fprintf(fid, '%s;', b_parameter{1,1:end-1}) ;
